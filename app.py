@@ -18,6 +18,7 @@ from transformers import DistilBertTokenizer, TFDistilBertForSequenceClassificat
 from collections import Counter
 import google.generativeai as genai
 from waitress import serve
+import gdown
 
 # Load env vars
 load_dotenv()
@@ -33,9 +34,23 @@ with open(os.path.join(model_path, 'label_encoder.pkl'), 'rb') as f:
     le = pickle.load(f)
 num_labels = len(le.classes_)
 
+# Google Drive file ID
+GOOGLE_DRIVE_FILE_ID = "1A2B3C4D5E6F7G8H9" 
+GDRIVE_URL = f"https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}"
+
 # Load model & tokenizer
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 model = TFDistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=num_labels)
+
+# Download and load weights
+if not os.path.exists(model_path):
+    os.makedirs(model_path, exist_ok=True)
+    print("Downloading model.h5 from Google Drive using gdown...")
+    gdown.download(GDRIVE_URL, model_path, quiet=False)
+
+print("Loading model weights...")
+model.load_weights(model_path)
+print("Model loaded successfully.")
 
 # Initialize Flask app
 app = Flask(__name__)
