@@ -34,9 +34,9 @@ with open(os.path.join(model_path, 'label_encoder.pkl'), 'rb') as f:
     le = pickle.load(f)
 num_labels = len(le.classes_)
 
-# Google Drive file ID
-GOOGLE_DRIVE_FILE_ID = "1A2B3C4D5E6F7G8H9" 
-GDRIVE_URL = f"https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}"
+
+# Google Drive .h5 model file URL
+GDRIVE_URL = "https://drive.google.com/file/d/1NV7r46AR8zikIMtHBQQp6495Sr8JZyJA/view?usp=sharing"
 
 # Load model & tokenizer
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
