@@ -35,21 +35,21 @@ with open(os.path.join(model_path, 'label_encoder.pkl'), 'rb') as f:
 num_labels = len(le.classes_)
 
 
-# Google Drive .h5 model file URL
-GDRIVE_URL = "https://drive.google.com/file/d/1NV7r46AR8zikIMtHBQQp6495Sr8JZyJA/view?usp=sharing"
+model_dir = os.path.join(os.getcwd(), 'bert_model')
+model_file = os.path.join(model_dir, 't5_model.h5')
+gdrive_file_id = "1NV7r46AR8zikIMtHBQQp6495Sr8JZyJA"
 
 # Load model & tokenizer
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 model = TFDistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=num_labels)
 
-# Download and load weights
-if not os.path.exists(model_path):
-    os.makedirs(model_path, exist_ok=True)
-    print("Downloading model.h5 from Google Drive using gdown...")
-    gdown.download(GDRIVE_URL, model_path, quiet=False)
+if not os.path.exists(model_file):
+    os.makedirs(model_dir, exist_ok=True)
+    print("Downloading t5_model.h5 from Google Drive...")
+    gdown.download(id=gdrive_file_id, output=model_file, quiet=False)
 
 print("Loading model weights...")
-model.load_weights(model_path)
+model.load_weights(model_file)
 print("Model loaded successfully.")
 
 # Initialize Flask app
