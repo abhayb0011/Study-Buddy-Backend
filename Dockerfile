@@ -15,9 +15,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy the rest of your app
 COPY . /app
 
-# Download the model at build time (optional: remove if model is downloaded at runtime)
-# RUN python -c "import gdown; gdown.download('', 'studdybuddy_model.h5', quiet=False)"
-
 # Expose port
 EXPOSE 8080
 
