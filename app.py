@@ -14,7 +14,7 @@ import pdfplumber
 import pickle
 import tensorflow as tf
 import numpy as np
-from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
+from transformers import DistilBertTokenizer, TFDistilBertForSequenceClassification
 from collections import Counter
 import google.generativeai as genai
 from waitress import serve
@@ -27,12 +27,15 @@ api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 model_gemini = genai.GenerativeModel('models/gemini-1.5-flash')
 
-# Load model & tokenizer
 model_path = os.path.join(os.getcwd(), 'bert_model')
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = TFAutoModelForSequenceClassification.from_pretrained(model_path)
+# Load label encoder
 with open(os.path.join(model_path, 'label_encoder.pkl'), 'rb') as f:
     le = pickle.load(f)
+num_labels = len(le.classes_)
+
+# Load model & tokenizer
+tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+model = TFDistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=num_labels)
 
 # Initialize Flask app
 app = Flask(__name__)
