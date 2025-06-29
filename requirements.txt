@@ -2,6 +2,7 @@ absl-py==2.3.0
 annotated-types==0.7.0
 astunparse==1.6.3
 bcrypt==4.3.0
+beautifulsoup4==4.13.4
 blinker==1.9.0
 cachetools==5.5.2
 certifi==2025.6.15
@@ -19,6 +20,8 @@ Flask-PyMongo==3.0.1
 flatbuffers==25.2.10
 fsspec==2025.5.1
 gast==0.6.0
+gdown==5.2.0
+git-filter-repo==2.47.0
 google-ai-generativelanguage==0.6.15
 google-api-core==2.25.1
 google-api-python-client==2.174.0
@@ -61,6 +64,7 @@ PyJWT==2.10.1
 pymongo==4.13.2
 pyparsing==3.2.3
 pypdfium2==4.30.1
+PySocks==1.7.1
 python-dotenv==1.1.0
 PyYAML==6.0.2
 regex==2024.11.6
@@ -71,11 +75,11 @@ safetensors==0.5.3
 scikit-learn==1.4.2
 scipy==1.13.1
 six==1.17.0
+soupsieve==2.7
 tensorboard==2.15.2
 tensorboard-data-server==0.7.2
 tensorflow==2.15.0
 tensorflow-estimator==2.15.0
-tensorflow-intel==2.15.0
 tensorflow-io-gcs-filesystem==0.31.0
 termcolor==3.1.0
 threadpoolctl==3.6.0
