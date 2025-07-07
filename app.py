@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from db import mongo, test_connection
 import jwt
 from datetime import datetime, timedelta, timezone
-from models.user_schema import create_user, get_user_by_id, get_user_by_email, verify_user, update_chat_history
+from models.user_schema import create_user, get_user_by_id, get_user_by_email, verify_user, update_chat_history, update_user_profile
 from models.chat_schema import save_chat  
 from models.pdf_schema import save_pdf_chunks, get_pdf_chunks
 from models.resource_schema import get_all_resources
@@ -202,6 +202,23 @@ def profile(user):
         'chat_history': user.get('chat_history', []),
         'created_at': user['created_at']
     }), 200
+
+@app.route('/update-profile', methods=['PUT'])
+@require_auth
+def update_profile(user):
+    data = request.json
+    name = data.get('name')
+    username = data.get('username')
+
+    if not name or not username:
+        return jsonify({'error': 'Name and username are required'}), 400
+
+    try:
+        update_user_profile(user['_id'], name, username)
+        return jsonify({'message': 'Profile updated successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update profile: {str(e)}'}), 500
+
 
 @app.route("/quote-of-the-day", methods=["GET"])
 def quote_of_the_day():

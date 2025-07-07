@@ -33,6 +33,12 @@ def verify_user(email, password):
         return user
     return None
 
+def update_user_profile(user_id, name, username):
+    return mongo.db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"name": name, "username": username}}
+    )
+
 def update_chat_history(user_id, new_entry):
     try:
         user = users_collection.find_one({ "_id": ObjectId(user_id) })
