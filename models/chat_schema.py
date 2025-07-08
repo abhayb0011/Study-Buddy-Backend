@@ -1,5 +1,5 @@
 from db import mongo
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 
 chats_collection = mongo.db.chats
@@ -11,7 +11,7 @@ def save_chat(user_id, question, answer, source="pdf"):
         "question": question,
         "answer": answer,
         "source": source,  # could be 'pdf', 'planner', etc.
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(timezone.utc)
     }
     chats_collection.insert_one(chat_doc)
 

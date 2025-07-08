@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_bcrypt import Bcrypt
 from db import mongo
 from bson import ObjectId
@@ -14,7 +14,7 @@ def create_user(email, password, name, username):
         "name": name,
         "username": username,
         "chat_history": [],  # limited to 10 most recent entries
-        "created_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc)
     }
     return users_collection.insert_one(user)
 
@@ -34,7 +34,7 @@ def verify_user(email, password):
     return None
 
 def update_user_profile(user_id, name, username):
-    return mongo.db.users.update_one(
+    return users_collection.update_one(
         {"_id": ObjectId(user_id)},
         {"$set": {"name": name, "username": username}}
     )
