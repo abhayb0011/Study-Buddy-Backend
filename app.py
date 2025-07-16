@@ -6,10 +6,6 @@ from dotenv import load_dotenv
 from db import mongo,init_db,test_connection
 import jwt
 from datetime import datetime, timedelta, timezone
-from models.user_schema import create_user, get_user_by_id, get_user_by_email, verify_user, update_chat_history, update_user_profile
-from models.chat_schema import save_chat  
-from models.pdf_schema import save_pdf_chunks, get_pdf_chunks
-from models.resource_schema import get_all_resources
 import pdfplumber
 import pickle
 import tensorflow as tf
@@ -59,6 +55,11 @@ CORS(app)
 # Initialize the database
 init_db(app)
 test_connection()
+
+from models.user_schema import create_user, get_user_by_id, get_user_by_email, verify_user, update_chat_history, update_user_profile
+from models.chat_schema import save_chat  
+from models.pdf_schema import save_pdf_chunks, get_pdf_chunks
+from models.resource_schema import get_all_resources
 
 # JWT secret
 SECRET_KEY = os.getenv("JWT_SECRET", "supersecretkey")
