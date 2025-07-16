@@ -167,48 +167,57 @@ def retrieve_chunks_from_session_or_db(pdf_id):
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-    name = data.get('name')
-    username = data.get('username')
+    try:
+        email = request.json.get('email')
+        password = request.json.get('password')
+        name = request.json.get('name')
+        username = request.json.get('username')
 
-    if get_user_by_email(email):
-        return jsonify({'error': 'User already exists'}), 409
+        if( not email or not password or not name or not username):
+            return jsonify({'error': 'All fields are required'}), 400
 
-    create_user(email, password, name, username)
-    return jsonify({'message': 'User created successfully'}), 201
+        if get_user_by_email(email):
+            return jsonify({'error': 'User already exists'}), 409
+
+        create_user(email, password, name, username)
+        return jsonify({'message': 'User created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create user: {str(e)}'}), 500
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
+    try:
+        email = request.json.get('email')
+        password = request.json.get('password')
 
-    user = verify_user(email, password)
-    if not user:
-        return jsonify({'error': 'Invalid credentials'}), 401
+        user = verify_user(email, password)
+        if not user:
+            return jsonify({'error': 'Invalid credentials'}), 401
 
-    token = generate_token(user['_id'])
-    return jsonify({'token': token}), 200
+        token = generate_token(user['_id'])
+        return jsonify({'token': token}), 200
+    except Exception as e:
+        return jsonify({'error': f'Login failed: {str(e)}'}), 500
 
 @app.route('/profile', methods=['GET'])
 @require_auth
 def profile(user):
-    return jsonify({
-        'email': user['email'],
-        'name': user['name'],
-        'username': user['username'],
-        'chat_history': user.get('chat_history', []),
-        'created_at': user['created_at']
-    }), 200
+    try:
+        return jsonify({
+            'email': user['email'],
+            'name': user['name'],
+            'username': user['username'],
+            'chat_history': user.get('chat_history', []),
+            'created_at': user['created_at']
+        }), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch profile: {str(e)}'}), 500
 
 @app.route('/update-profile', methods=['PUT'])
 @require_auth
 def update_profile(user):
-    data = request.json
-    name = data.get('name')
-    username = data.get('username')
+    name = request.json.get('name')
+    username = request.json.get('username')
 
     if not name or not username:
         return jsonify({'error': 'Name and username are required'}), 400

@@ -25,13 +25,17 @@ def get_user_by_id(user_id):
         return None
 
 def get_user_by_email(email):
-    return users_collection.find_one({ "email": email })    
-
+    try:
+        return users_collection.find_one({ "email": email }) 
+    except:   
+        return None
+    
 def verify_user(email, password):
     user = get_user_by_email(email)
     if user and bcrypt.check_password_hash(user['password'], password):
         return user
-    return None
+    else:
+        return None
 
 def update_user_profile(user_id, name, username):
     return users_collection.update_one(
@@ -41,7 +45,7 @@ def update_user_profile(user_id, name, username):
 
 def update_chat_history(user_id, new_entry):
     try:
-        user = users_collection.find_one({ "_id": ObjectId(user_id) })
+        user = get_user_by_id(user_id)
         if not user:
             return False
 
