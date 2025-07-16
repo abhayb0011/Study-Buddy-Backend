@@ -3,7 +3,7 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from db import mongo, test_connection
+from db import mongo,init_db,test_connection
 import jwt
 from datetime import datetime, timedelta, timezone
 from models.user_schema import create_user, get_user_by_id, get_user_by_email, verify_user, update_chat_history, update_user_profile
@@ -56,12 +56,9 @@ print("Model loaded successfully.")
 app = Flask(__name__)
 CORS(app)
 
-# MongoDB URI config
-app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb://localhost:27017/myDatabase")
-
-# Initialize mongo
-mongo.init_app(app)
-test_connection(app)
+# Initialize the database
+init_db(app)
+test_connection()
 
 # JWT secret
 SECRET_KEY = os.getenv("JWT_SECRET", "supersecretkey")
@@ -189,6 +186,9 @@ def login():
     try:
         email = request.json.get('email')
         password = request.json.get('password')
+
+        if not email or not password:
+            return jsonify({'error': 'Email and password are required'}), 400
 
         user = verify_user(email, password)
         if not user:

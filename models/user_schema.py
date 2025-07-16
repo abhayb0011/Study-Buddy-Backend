@@ -29,6 +29,9 @@ def get_user_by_email(email):
         return users_collection.find_one({ "email": email }) 
     except:   
         return None
+
+# Why do we use get user_by_id when we have get_user_by_email ?
+# This is because user_id is indexed in mongoDB. O(logn) time to get user_by_id. O(n) time to get_user_by_email.
     
 def verify_user(email, password):
     user = get_user_by_email(email)
