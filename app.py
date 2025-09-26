@@ -22,7 +22,7 @@ load_dotenv()
 # Configure Gemini
 api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
-model_gemini = genai.GenerativeModel('gemini-1.5-flash')
+model_gemini = genai.GenerativeModel('gemini-2.0-flash')
 
 model_path = os.path.join(os.getcwd(), 'bert_model')
 # Load label encoder
