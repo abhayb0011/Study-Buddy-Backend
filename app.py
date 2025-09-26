@@ -142,21 +142,29 @@ def predict_topic(texts):
 
 def extract_questions_from_text(text):
     prompt = f"""
-You are an expert at extracting multiple choice questions from academic content.
-Extract all individual multiple choice questions from the text below.
-Only return a clean Python list of strings.
-Do NOT include explanations or numbers. No markdown. No extra formatting.
+You are an AI trained to extract multiple choice questions from exam PDFs.
+Extract ALL the questions from the text below and return ONLY a valid Python list of strings.
+
+- No numbering.
+- No explanations.
+- Output must look like: ["Question 1 text", "Question 2 text", "Question 3 text"]
 
 Text:
 '''{text}'''
-Return the list of questions only.
 """
     try:
         response = model_gemini.generate_content(prompt)
-        return eval(response.text.strip())
+        output = response.text.strip()
+
+        if output.startswith("[") and output.endswith("]"):
+            return eval(output)
+        else:
+            print("⚠️ Gemini returned unexpected format:", output)
+            return []
     except Exception as e:
         print("Gemini error:", e)
         return []
+
 
 def retrieve_chunks_from_session_or_db(pdf_id):
     return get_pdf_chunks(pdf_id)
