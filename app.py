@@ -15,6 +15,7 @@ from collections import Counter
 import google.generativeai as genai
 from waitress import serve
 import gdown
+import re
 
 # Load env vars
 load_dotenv()
@@ -140,14 +141,16 @@ def predict_topic(texts):
     preds = tf.argmax(logits, axis=1).numpy()
     return le.inverse_transform(preds)
 
+
 def extract_questions_from_text(text):
     prompt = f"""
-You are an AI trained to extract multiple choice questions from exam PDFs.
-Extract ALL the questions from the text below and return ONLY a valid Python list of strings.
+You are an AI that extracts multiple-choice questions from academic text.
+Extract **all** individual questions from the text below and return ONLY a valid Python list of strings.
 
-- No numbering.
-- No explanations.
-- Output must look like: ["Question 1 text", "Question 2 text", "Question 3 text"]
+Rules:
+- Output must look like: ["Question 1 text", "Question 2 text", ...]
+- Do NOT add markdown, code fences, explanations, or anything else.
+- Do NOT number the questions.
 
 Text:
 '''{text}'''
@@ -156,10 +159,16 @@ Text:
         response = model_gemini.generate_content(prompt)
         output = response.text.strip()
 
-        if output.startswith("[") and output.endswith("]"):
-            return eval(output)
+        output = re.sub(r"^```[a-zA-Z]*", "", output)   # remove starting ```python or ```json
+        output = re.sub(r"```$", "", output)            # remove trailing ```
+        output = output.strip()
+
+        match = re.search(r"\[.*\]", output, re.DOTALL)
+        if match:
+            clean_list = match.group(0)
+            return eval(clean_list)
         else:
-            print("⚠️ Gemini returned unexpected format:", output)
+            print("Gemini returned invalid list format:", output)
             return []
     except Exception as e:
         print("Gemini error:", e)
